@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';
+import {checkCredentials,makeToken,cookieName} from '@/lib/auth';
+export async function POST(req:Request){try{const {username,password}=await req.json();if(typeof username!=='string'||typeof password!=='string'||!checkCredentials(username,password))return NextResponse.json({error:'Incorrect username or password'},{status:401});const token=await makeToken();const response=NextResponse.json({ok:true});response.cookies.set(cookieName,token,{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'strict',path:'/',maxAge:60*60*8});return response}catch{return NextResponse.json({error:'Login configuration error'},{status:500})}}

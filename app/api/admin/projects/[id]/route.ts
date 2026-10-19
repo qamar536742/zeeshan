@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';import {isAdmin} from '@/lib/auth';import {patchProject,deleteProject} from '@/lib/db';import {validateProject} from '@/lib/validate';
+type Context={params:Promise<{id:string}>};
+export async function PUT(req:Request,{params}:Context){if(!await isAdmin())return NextResponse.json({error:'Unauthorized'},{status:401});try{const {id}=await params;await patchProject(id,validateProject(await req.json()));return NextResponse.json({ok:true})}catch(e){return NextResponse.json({error:String(e)},{status:400})}}
+export async function DELETE(_req:Request,{params}:Context){if(!await isAdmin())return NextResponse.json({error:'Unauthorized'},{status:401});try{const {id}=await params;await deleteProject(id);return NextResponse.json({ok:true})}catch(e){return NextResponse.json({error:String(e)},{status:400})}}
